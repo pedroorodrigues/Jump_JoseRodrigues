@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Jump_Player : MonoBehaviour
 {
@@ -18,7 +19,6 @@ public class Jump_Player : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask Wall;
 
-
     private float charge;
     private bool isGrounded;
     private bool forceUnGround;
@@ -28,11 +28,12 @@ public class Jump_Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
     private Animator animator;
-
+    private JumpBar jumpBar;
     #endregion
 
     private void Awake()
     {
+        jumpBar = GetComponent<JumpBar>();
         rigidBody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -86,9 +87,15 @@ public class Jump_Player : MonoBehaviour
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
                 charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
+                JumpBar jumpComponent = jumpBar.GetComponent<JumpBar>();
+                if (jumpComponent != null)
+                {
+                    jumpComponent.Jump_Bar(charge);
+                }
             }
             else if (touch.phase == TouchPhase.Ended)
             {
+                
                 rigidBody.gravityScale = 1;
                 
                 float screenWidth = Screen.width;
@@ -142,5 +149,4 @@ public class Jump_Player : MonoBehaviour
         }
     }
 
-    
 }

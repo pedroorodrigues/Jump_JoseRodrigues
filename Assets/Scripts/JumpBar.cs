@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JumpBar : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Image Bar;
+    public float waitTime = 30.0f;
+    private float jumpBar;
 
-    // Update is called once per frame
-    void Update()
+    public void Jump_Bar(float amount)
     {
-        
+        jumpBar += amount;
     }
-}
+    private void Update()
+    {
+        Debug.Log(jumpBar);
+        //jumpBar.fillAmount = Mathf.Clamp01(90f);
+        //Bar.fillAmount -= 1.0f / waitTime * Time.deltaTime;
+    }
+}   
