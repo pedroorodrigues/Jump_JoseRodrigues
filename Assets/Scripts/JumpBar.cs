@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class JumpBar : MonoBehaviour
 {
     [SerializeField] private Image Bar;
-    public float waitTime = 30.0f;
+    //public float waitTime = 30.0f;
     private float jumpBar;
 
     public void Jump_Bar(float charge)

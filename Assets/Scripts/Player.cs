@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Jump_Player : MonoBehaviour
+public class Player : MonoBehaviour
 {
     #region Variáveis
 
