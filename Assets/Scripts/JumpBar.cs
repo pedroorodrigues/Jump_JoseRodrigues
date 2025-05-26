@@ -10,9 +10,9 @@ public class JumpBar : MonoBehaviour
     public float waitTime = 30.0f;
     private float jumpBar;
 
-    public void Jump_Bar(float amount)
+    public void Jump_Bar(float charge)
     {
-        jumpBar += amount;
+        jumpBar += charge;
     }
     private void Update()
     {

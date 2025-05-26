@@ -33,7 +33,6 @@ public class Jump_Player : MonoBehaviour
 
     private void Awake()
     {
-        jumpBar = GetComponent<JumpBar>();
         rigidBody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
@@ -82,16 +81,17 @@ public class Jump_Player : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                charge = 0f;
-            }
-            else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-            {
-                charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
                 JumpBar jumpComponent = jumpBar.GetComponent<JumpBar>();
                 if (jumpComponent != null)
                 {
                     jumpComponent.Jump_Bar(charge);
                 }
+                charge = 0f;
+            }
+            else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+            {
+                charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
+ 
             }
             else if (touch.phase == TouchPhase.Ended)
             {
