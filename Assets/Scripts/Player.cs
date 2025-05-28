@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheck = 0.1f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask Wall;
+    private JumpBar jumpBar;
 
     private float charge;
     private bool isGrounded;
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
     private Animator animator;
-    private JumpBar jumpBar;
+    
     #endregion
 
     private void Awake()
@@ -36,7 +37,7 @@ public class Player : MonoBehaviour
         rigidBody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
-
+        jumpBar = GetComponent<JumpBar>();
     }
 
     private void Update()
@@ -61,10 +62,12 @@ public class Player : MonoBehaviour
         RaycastHit2D hit2 = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
         RaycastHit2D hit3 = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
 
-        isGrounded = hit || hit2 || hit3 && !forceUnGround;
-        if (isGrounded == true)
+        isGrounded = hit || hit2 || hit3 /*&& !forceUnGround*/;
+        if (isGrounded == hit || hit2 || hit3)
         {
             physicsMaterial.bounciness = 0;
+            physicsMaterial.bounciness = 0;
+
         }
         else
         {
@@ -76,26 +79,21 @@ public class Player : MonoBehaviour
     {
         if ((Input.touchCount > 0 && isGrounded) || (Input.touchCount > 0 && forceJump))
         {
-            
             Touch touch = Input.GetTouch(0);
 
             if (touch.phase == TouchPhase.Began)
             {
-                JumpBar jumpComponent = jumpBar.GetComponent<JumpBar>();
-                if (jumpComponent != null)
-                {
-                    jumpComponent.Jump_Bar(charge);
-                }
-                charge = 0f;
+                
+                
             }
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
-                charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
- 
+                charge = Mathf.MoveTowards(charge, maxJumpForce * holdForce, Time.deltaTime);
+                jumpBar?.Jump_Bar(charge/maxJumpForce);
             }
             else if (touch.phase == TouchPhase.Ended)
             {
-                
+                SetStivky(false);
                 rigidBody.gravityScale = 1;
                 
                 float screenWidth = Screen.width;
@@ -108,10 +106,15 @@ public class Player : MonoBehaviour
                 transform.localScale = localScale;
 
 
+
                 rigidBody.AddForce(Vector2.up * charge, ForceMode2D.Impulse);
                 rigidBody.AddForce(direction * (charge / 2), ForceMode2D.Impulse);
 
+
+                StopCoroutine(ForceUnGroundTimer());
                 StartCoroutine(ForceUnGroundTimer());
+                charge =0;
+                jumpBar?.Jump_Bar(charge/maxJumpForce);
             }
         }
 
@@ -121,6 +124,7 @@ public class Player : MonoBehaviour
     {
         forceUnGround = true;
         yield return new WaitForSeconds(0.5f);
+        charge = 0;
         forceUnGround = false;
     }
 
@@ -147,6 +151,11 @@ public class Player : MonoBehaviour
             rigidBody.gravityScale = 1;
             physicsMaterial.bounciness = 0;
         }
+    }
+
+    public void OnWind()
+    {
+        rigidBody.AddForce(Vector2.left * 0.05f, ForceMode2D.Impulse);
     }
 
 }
