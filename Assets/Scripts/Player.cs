@@ -88,7 +88,8 @@ public class Player : MonoBehaviour
             }
             else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
-                charge = Mathf.MoveTowards(charge, maxJumpForce * holdForce, Time.deltaTime);
+                //charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
+                charge = Mathf.LerpAngle(charge, maxJumpForce, Time.deltaTime * holdForce);
                 jumpBar?.Jump_Bar(charge/maxJumpForce);
             }
             else if (touch.phase == TouchPhase.Ended)
@@ -111,8 +112,8 @@ public class Player : MonoBehaviour
                 rigidBody.AddForce(direction * (charge / 2), ForceMode2D.Impulse);
 
 
-                StopCoroutine(ForceUnGroundTimer());
-                StartCoroutine(ForceUnGroundTimer());
+                //StopCoroutine(ForceUnGroundTimer());
+                //StartCoroutine(ForceUnGroundTimer());
                 charge =0;
                 jumpBar?.Jump_Bar(charge/maxJumpForce);
             }
@@ -120,13 +121,13 @@ public class Player : MonoBehaviour
 
     }
 
-    private IEnumerator ForceUnGroundTimer()
-    {
-        forceUnGround = true;
-        yield return new WaitForSeconds(0.5f);
-        charge = 0;
-        forceUnGround = false;
-    }
+    //private IEnumerator ForceUnGroundTimer()
+    //{
+    //    forceUnGround = true;
+    //    yield return new WaitForSeconds(0.5f);
+    //    charge = 0;
+    //    forceUnGround = false;
+    //}
 
 
     public void SwitchVelocity()
