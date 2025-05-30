@@ -14,6 +14,5 @@ public class Wall : MonoBehaviour
         {
             OnPlayerHitWall?.Invoke();
         }
-
     }
 }

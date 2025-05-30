@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float groundCheck = 0.1f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask Wall;
+
+
     private JumpBar jumpBar;
 
     private float charge;
@@ -29,7 +31,8 @@ public class Player : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
     private Animator animator;
-    
+
+    private float velocity;
     #endregion
 
     private void Awake()
@@ -44,6 +47,7 @@ public class Player : MonoBehaviour
     {
         GroundCheck();
         Jump();
+   
     }
 
     private void GroundCheck()
@@ -116,6 +120,7 @@ public class Player : MonoBehaviour
                 //StartCoroutine(ForceUnGroundTimer());
                 charge =0;
                 jumpBar?.Jump_Bar(charge/maxJumpForce);
+                //Vector2 currentVelocity = new Vector2(rigidBody.velocity.x, rigidBody.velocity.y);
             }
         }
 
@@ -134,6 +139,7 @@ public class Player : MonoBehaviour
     {
         Vector2 newVelocity = new Vector2(-rigidBody.velocity.x, rigidBody.velocity.y);
         rigidBody.velocity = newVelocity / 3;
+        print("swich");
     }
 
     public void Stiky()

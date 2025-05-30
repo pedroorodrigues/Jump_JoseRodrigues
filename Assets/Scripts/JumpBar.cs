@@ -23,7 +23,7 @@ public class JumpBar : MonoBehaviour
     }
     private void Update()
     {
-        Debug.Log(jumpBar);
+        //Debug.Log(jumpBar);
         Bar.fillAmount = Mathf.MoveTowards(jumpBar, 10f, Time.deltaTime);
     }
     private IEnumerator JumpCycle()
