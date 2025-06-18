@@ -145,7 +145,7 @@ public class Player : MonoBehaviour
     public void Stiky()
     {
         rigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
-        rigidBody.gravityScale = 0.01f;
+        rigidBody.gravityScale = 0.5f;
         rigidBody.constraints = RigidbodyConstraints2D.None;
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
         physicsMaterial.bounciness = 0;
