@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,6 +18,10 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask Wall;
 
+    [Header("Sprites")]
+    [SerializeField] private Sprite normalSprite;
+    [SerializeField] private Sprite jumpSprite;
+    [SerializeField] private Sprite vineSprite;
 
     private JumpBar jumpBar;
 
@@ -33,6 +36,10 @@ public class Player : MonoBehaviour
     private Animator animator;
 
     private float velocity;
+
+    private bool isOnVine = false;
+    private bool onLeftWall = true;
+
     #endregion
 
     private void Awake()
@@ -47,7 +54,7 @@ public class Player : MonoBehaviour
     {
         GroundCheck();
         Jump();
-   
+        UpdateSprite();
     }
 
     private void GroundCheck()
@@ -61,17 +68,15 @@ public class Player : MonoBehaviour
         Vector2 vector3 = new Vector2(transform.position.x, transform.position.y);
         Debug.DrawRay(vector3, Vector2.down * groundCheck, Color.red);
 
-
         RaycastHit2D hit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
         RaycastHit2D hit2 = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
         RaycastHit2D hit3 = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0f, Vector2.down, 0.1f, groundLayer);
 
-        isGrounded = hit || hit2 || hit3 /*&& !forceUnGround*/;
-        if (isGrounded == hit || hit2 || hit3)
+        isGrounded = hit || hit2 || hit3;
+
+        if (isGrounded)
         {
             physicsMaterial.bounciness = 0;
-            physicsMaterial.bounciness = 0;
-
         }
         else
         {
@@ -85,22 +90,16 @@ public class Player : MonoBehaviour
         {
             Touch touch = Input.GetTouch(0);
 
-            if (touch.phase == TouchPhase.Began)
+            if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
-                
-                
-            }
-            else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-            {
-                //charge = Mathf.MoveTowards(charge, maxJumpForce, Time.deltaTime * holdForce);
                 charge = Mathf.LerpAngle(charge, maxJumpForce, Time.deltaTime * holdForce);
-                jumpBar?.Jump_Bar(charge/maxJumpForce);
+                jumpBar?.Jump_Bar(charge / maxJumpForce);
             }
             else if (touch.phase == TouchPhase.Ended)
             {
                 SetStivky(false);
                 rigidBody.gravityScale = 1;
-                
+
                 float screenWidth = Screen.width;
                 float touchPositionX = touch.position.x;
 
@@ -110,30 +109,33 @@ public class Player : MonoBehaviour
                 localScale.x = direction == Vector2.right ? -Mathf.Abs(localScale.x) : Mathf.Abs(localScale.x);
                 transform.localScale = localScale;
 
-
-
                 rigidBody.AddForce(Vector2.up * charge, ForceMode2D.Impulse);
                 rigidBody.AddForce(direction * (charge / 2), ForceMode2D.Impulse);
 
-
-                //StopCoroutine(ForceUnGroundTimer());
-                //StartCoroutine(ForceUnGroundTimer());
-                charge =0;
-                jumpBar?.Jump_Bar(charge/maxJumpForce);
-                //Vector2 currentVelocity = new Vector2(rigidBody.velocity.x, rigidBody.velocity.y);
+                charge = 0;
+                jumpBar?.Jump_Bar(0f);
             }
         }
-
     }
 
-    //private IEnumerator ForceUnGroundTimer()
-    //{
-    //    forceUnGround = true;
-    //    yield return new WaitForSeconds(0.5f);
-    //    charge = 0;
-    //    forceUnGround = false;
-    //}
-
+    private void UpdateSprite()
+    {
+        if (isOnVine)
+        {
+            spriteRenderer.sprite = vineSprite;
+            Vector3 scale = transform.localScale;
+            scale.x = onLeftWall ? Mathf.Abs(scale.x) : -Mathf.Abs(scale.x);
+            transform.localScale = scale;
+        }
+        else if (!isGrounded)
+        {
+            spriteRenderer.sprite = jumpSprite;
+        }
+        else
+        {
+            spriteRenderer.sprite = normalSprite;
+        }
+    }
 
     public void SwitchVelocity()
     {
@@ -150,10 +152,11 @@ public class Player : MonoBehaviour
         rigidBody.constraints = RigidbodyConstraints2D.FreezeRotation;
         physicsMaterial.bounciness = 0;
     }
+
     public void SetStivky(bool stivky)
     {
         forceJump = stivky;
-        if (stivky == false)
+        if (!stivky)
         {
             rigidBody.gravityScale = 1;
             physicsMaterial.bounciness = 0;
@@ -165,4 +168,15 @@ public class Player : MonoBehaviour
         rigidBody.AddForce(Vector2.left * 0.05f, ForceMode2D.Impulse);
     }
 
+    public void OnWindRight()
+    {
+        rigidBody.AddForce(Vector2.right * 0.05f, ForceMode2D.Impulse);
+    }
+
+    // ===== Vinha sprite control =====
+    public void SetOnVine(bool isOnVine, bool isLeftWall)
+    {
+        this.isOnVine = isOnVine;
+        this.onLeftWall = isLeftWall;
+    }
 }
