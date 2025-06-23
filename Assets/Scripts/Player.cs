@@ -49,6 +49,10 @@ public class Player : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         jumpBar = GetComponent<JumpBar>();
     }
+    private void Start()
+    {
+        physicsMaterial.bounciness = 0;
+    }
 
     private void Update()
     {
@@ -171,12 +175,5 @@ public class Player : MonoBehaviour
     public void OnWindRight()
     {
         rigidBody.AddForce(Vector2.right * 0.05f, ForceMode2D.Impulse);
-    }
-
-    // ===== Vinha sprite control =====
-    public void SetOnVine(bool isOnVine, bool isLeftWall)
-    {
-        this.isOnVine = isOnVine;
-        this.onLeftWall = isLeftWall;
     }
 }
